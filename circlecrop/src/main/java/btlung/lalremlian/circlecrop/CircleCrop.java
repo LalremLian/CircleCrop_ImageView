@@ -1,11 +1,5 @@
-package btlung.lalremlian.circlecrop;
 
-import androidx.annotation.ColorInt;
-import androidx.annotation.ColorRes;
-import androidx.annotation.DrawableRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
+package btlung.lalremlian.circlecrop;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -26,17 +20,21 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewOutlineProvider;
-import android.widget.ImageView;
+
+import androidx.annotation.ColorInt;
+import androidx.annotation.ColorRes;
+import androidx.annotation.DrawableRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 
 @SuppressWarnings("UnusedDeclaration")
 public class CircleCrop extends androidx.appcompat.widget.AppCompatImageView
 {
-    //Variables.....................................................................................
+
     private static final ScaleType SCALE_TYPE = ScaleType.CENTER_CROP;
 
     private static final Bitmap.Config BITMAP_CONFIG = Bitmap.Config.ARGB_8888;
@@ -76,12 +74,12 @@ public class CircleCrop extends androidx.appcompat.widget.AppCompatImageView
     private boolean mBorderOverlay;
     private boolean mDisableCircularTransformation;
 
-    //Super context.................................................................................
-    public CircleCrop(@NonNull Context context)
-    {
+    public CircleCrop(Context context) {
         super(context);
+
         init();
     }
+
     public CircleCrop(Context context, AttributeSet attrs)
     {
         this(context, attrs, 0);
@@ -103,8 +101,7 @@ public class CircleCrop extends androidx.appcompat.widget.AppCompatImageView
         init();
     }
 
-    private void init()
-    {
+    private void init() {
         mInitialized = true;
 
         super.setScaleType(SCALE_TYPE);
@@ -124,23 +121,20 @@ public class CircleCrop extends androidx.appcompat.widget.AppCompatImageView
         mCircleBackgroundPaint.setAntiAlias(true);
         mCircleBackgroundPaint.setColor(mCircleBackgroundColor);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-        {
-            setOutlineProvider(new OutlineProvider()); //Calling OutlineProvider class..............
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            setOutlineProvider(new OutlineProvider());
         }
     }
+
     @Override
-    public void setScaleType(ScaleType scaleType)
-    {
-        if (scaleType != SCALE_TYPE)
-        {
+    public void setScaleType(ScaleType scaleType) {
+        if (scaleType != SCALE_TYPE) {
             throw new IllegalArgumentException(String.format("ScaleType %s not supported.", scaleType));
         }
     }
 
     @Override
-    public void setAdjustViewBounds(boolean adjustViewBounds)
-    {
+    public void setAdjustViewBounds(boolean adjustViewBounds) {
         if (adjustViewBounds) {
             throw new IllegalArgumentException("adjustViewBounds not supported.");
         }
@@ -148,30 +142,25 @@ public class CircleCrop extends androidx.appcompat.widget.AppCompatImageView
 
     @SuppressLint("CanvasSize")
     @Override
-    protected void onDraw(Canvas canvas)
-    {
-        if (mDisableCircularTransformation)
-        {
+    protected void onDraw(Canvas canvas) {
+        if (mDisableCircularTransformation) {
             super.onDraw(canvas);
             return;
         }
 
-        if (mCircleBackgroundColor != Color.TRANSPARENT)
-        {
+        if (mCircleBackgroundColor != Color.TRANSPARENT) {
             canvas.drawCircle(mDrawableRect.centerX(), mDrawableRect.centerY(), mDrawableRadius, mCircleBackgroundPaint);
         }
 
         if (mBitmap != null) {
-            if (mDrawableDirty && mBitmapCanvas != null)
-            {
+            if (mDrawableDirty && mBitmapCanvas != null) {
                 mDrawableDirty = false;
                 Drawable drawable = getDrawable();
                 drawable.setBounds(0, 0, mBitmapCanvas.getWidth(), mBitmapCanvas.getHeight());
                 drawable.draw(mBitmapCanvas);
             }
 
-            if (mRebuildShader)
-            {
+            if (mRebuildShader) {
                 mRebuildShader = false;
 
                 BitmapShader bitmapShader = new BitmapShader(mBitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
@@ -189,44 +178,38 @@ public class CircleCrop extends androidx.appcompat.widget.AppCompatImageView
     }
 
     @Override
-    public void invalidateDrawable(@NonNull Drawable dr)
-    {
+    public void invalidateDrawable(@NonNull Drawable dr) {
         mDrawableDirty = true;
         invalidate();
     }
 
     @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh)
-    {
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         updateDimensions();
         invalidate();
     }
 
     @Override
-    public void setPadding(int left, int top, int right, int bottom)
-    {
+    public void setPadding(int left, int top, int right, int bottom) {
         super.setPadding(left, top, right, bottom);
         updateDimensions();
         invalidate();
     }
 
     @Override
-    public void setPaddingRelative(int start, int top, int end, int bottom)
-    {
+    public void setPaddingRelative(int start, int top, int end, int bottom) {
         super.setPaddingRelative(start, top, end, bottom);
         updateDimensions();
         invalidate();
     }
-    public int getBorderColor()
-    {
+
+    public int getBorderColor() {
         return mBorderColor;
     }
 
-    public void setBorderColor(@ColorInt int borderColor)
-    {
-        if (borderColor == mBorderColor)
-        {
+    public void setBorderColor(@ColorInt int borderColor) {
+        if (borderColor == mBorderColor) {
             return;
         }
 
@@ -235,15 +218,12 @@ public class CircleCrop extends androidx.appcompat.widget.AppCompatImageView
         invalidate();
     }
 
-    public int getCircleBackgroundColor()
-    {
+    public int getCircleBackgroundColor() {
         return mCircleBackgroundColor;
     }
 
-    public void setCircleBackgroundColor(@ColorInt int circleBackgroundColor)
-    {
-        if (circleBackgroundColor == mCircleBackgroundColor)
-        {
+    public void setCircleBackgroundColor(@ColorInt int circleBackgroundColor) {
+        if (circleBackgroundColor == mCircleBackgroundColor) {
             return;
         }
 
@@ -252,24 +232,20 @@ public class CircleCrop extends androidx.appcompat.widget.AppCompatImageView
         invalidate();
     }
 
-
-    //@deprecated Use {@link #setCircleBackgroundColor(int)} instead................................
-
+    /**
+     * @deprecated Use {@link #setCircleBackgroundColor(int)} instead
+     */
     @Deprecated
-    public void setCircleBackgroundColorResource(@ColorRes int circleBackgroundRes)
-    {
+    public void setCircleBackgroundColorResource(@ColorRes int circleBackgroundRes) {
         setCircleBackgroundColor(getContext().getResources().getColor(circleBackgroundRes));
     }
 
-    public int getBorderWidth()
-    {
+    public int getBorderWidth() {
         return mBorderWidth;
     }
 
-    public void setBorderWidth(int borderWidth)
-    {
-        if (borderWidth == mBorderWidth)
-        {
+    public void setBorderWidth(int borderWidth) {
+        if (borderWidth == mBorderWidth) {
             return;
         }
 
@@ -279,15 +255,12 @@ public class CircleCrop extends androidx.appcompat.widget.AppCompatImageView
         invalidate();
     }
 
-    public boolean isBorderOverlay()
-    {
+    public boolean isBorderOverlay() {
         return mBorderOverlay;
     }
 
-    public void setBorderOverlay(boolean borderOverlay)
-    {
-        if (borderOverlay == mBorderOverlay)
-        {
+    public void setBorderOverlay(boolean borderOverlay) {
+        if (borderOverlay == mBorderOverlay) {
             return;
         }
 
@@ -296,27 +269,22 @@ public class CircleCrop extends androidx.appcompat.widget.AppCompatImageView
         invalidate();
     }
 
-    public boolean isDisableCircularTransformation()
-    {
+    public boolean isDisableCircularTransformation() {
         return mDisableCircularTransformation;
     }
 
-    public void setDisableCircularTransformation(boolean disableCircularTransformation)
-    {
-        if (disableCircularTransformation == mDisableCircularTransformation)
-        {
+    public void setDisableCircularTransformation(boolean disableCircularTransformation) {
+        if (disableCircularTransformation == mDisableCircularTransformation) {
             return;
         }
 
         mDisableCircularTransformation = disableCircularTransformation;
 
-        if (disableCircularTransformation)
-        {
+        if (disableCircularTransformation) {
             mBitmap = null;
             mBitmapCanvas = null;
             mBitmapPaint.setShader(null);
-        } else
-        {
+        } else {
             initializeBitmap();
         }
 
@@ -324,44 +292,38 @@ public class CircleCrop extends androidx.appcompat.widget.AppCompatImageView
     }
 
     @Override
-    public void setImageBitmap(Bitmap bm)
-    {
+    public void setImageBitmap(Bitmap bm) {
         super.setImageBitmap(bm);
         initializeBitmap();
         invalidate();
     }
 
     @Override
-    public void setImageDrawable(Drawable drawable)
-    {
+    public void setImageDrawable(Drawable drawable) {
         super.setImageDrawable(drawable);
         initializeBitmap();
         invalidate();
     }
 
     @Override
-    public void setImageResource(@DrawableRes int resId)
-    {
+    public void setImageResource(@DrawableRes int resId) {
         super.setImageResource(resId);
         initializeBitmap();
         invalidate();
     }
 
     @Override
-    public void setImageURI(Uri uri)
-    {
+    public void setImageURI(Uri uri) {
         super.setImageURI(uri);
         initializeBitmap();
         invalidate();
     }
 
     @Override
-    public void setImageAlpha(int alpha)
-    {
+    public void setImageAlpha(int alpha) {
         alpha &= 0xFF;
 
-        if (alpha == mImageAlpha)
-        {
+        if (alpha == mImageAlpha) {
             return;
         }
 
@@ -369,24 +331,20 @@ public class CircleCrop extends androidx.appcompat.widget.AppCompatImageView
 
         // This might be called during ImageView construction before
         // member initialization has finished on API level >= 16.
-        if (mInitialized)
-        {
+        if (mInitialized) {
             mBitmapPaint.setAlpha(alpha);
             invalidate();
         }
     }
 
     @Override
-    public int getImageAlpha()
-    {
+    public int getImageAlpha() {
         return mImageAlpha;
     }
 
     @Override
-    public void setColorFilter(ColorFilter cf)
-    {
-        if (cf == mColorFilter)
-        {
+    public void setColorFilter(ColorFilter cf) {
+        if (cf == mColorFilter) {
             return;
         }
 
@@ -394,39 +352,32 @@ public class CircleCrop extends androidx.appcompat.widget.AppCompatImageView
 
         // This might be called during ImageView construction before
         // member initialization has finished on API level <= 19.
-        if (mInitialized)
-        {
+        if (mInitialized) {
             mBitmapPaint.setColorFilter(cf);
             invalidate();
         }
     }
 
     @Override
-    public ColorFilter getColorFilter()
-    {
+    public ColorFilter getColorFilter() {
         return mColorFilter;
     }
 
-    private Bitmap getBitmapFromDrawable(Drawable drawable)
-    {
-        if (drawable == null)
-        {
+    private Bitmap getBitmapFromDrawable(Drawable drawable) {
+        if (drawable == null) {
             return null;
         }
 
-        if (drawable instanceof BitmapDrawable)
-        {
+        if (drawable instanceof BitmapDrawable) {
             return ((BitmapDrawable) drawable).getBitmap();
         }
 
         try {
             Bitmap bitmap;
 
-            if (drawable instanceof ColorDrawable)
-            {
+            if (drawable instanceof ColorDrawable) {
                 bitmap = Bitmap.createBitmap(COLORDRAWABLE_DIMENSION, COLORDRAWABLE_DIMENSION, BITMAP_CONFIG);
-            } else
-            {
+            } else {
                 bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), BITMAP_CONFIG);
             }
 
@@ -434,47 +385,38 @@ public class CircleCrop extends androidx.appcompat.widget.AppCompatImageView
             drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
             drawable.draw(canvas);
             return bitmap;
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    private void initializeBitmap()
-    {
+    private void initializeBitmap() {
         mBitmap = getBitmapFromDrawable(getDrawable());
 
-        if (mBitmap != null && mBitmap.isMutable())
-        {
+        if (mBitmap != null && mBitmap.isMutable()) {
             mBitmapCanvas = new Canvas(mBitmap);
-        } else
-        {
+        } else {
             mBitmapCanvas = null;
         }
 
-        if (!mInitialized)
-        {
+        if (!mInitialized) {
             return;
         }
 
-        if (mBitmap != null)
-        {
+        if (mBitmap != null) {
             updateShaderMatrix();
-        } else
-        {
+        } else {
             mBitmapPaint.setShader(null);
         }
     }
 
-    private void updateDimensions()
-    {
+    private void updateDimensions() {
         mBorderRect.set(calculateBounds());
         mBorderRadius = Math.min((mBorderRect.height() - mBorderWidth) / 2.0f, (mBorderRect.width() - mBorderWidth) / 2.0f);
 
         mDrawableRect.set(mBorderRect);
-        if (!mBorderOverlay && mBorderWidth > 0)
-        {
+        if (!mBorderOverlay && mBorderWidth > 0) {
             mDrawableRect.inset(mBorderWidth - 1.0f, mBorderWidth - 1.0f);
         }
         mDrawableRadius = Math.min(mDrawableRect.height() / 2.0f, mDrawableRect.width() / 2.0f);
@@ -482,8 +424,7 @@ public class CircleCrop extends androidx.appcompat.widget.AppCompatImageView
         updateShaderMatrix();
     }
 
-    private RectF calculateBounds()
-    {
+    private RectF calculateBounds() {
         int availableWidth  = getWidth() - getPaddingLeft() - getPaddingRight();
         int availableHeight = getHeight() - getPaddingTop() - getPaddingBottom();
 
@@ -495,10 +436,8 @@ public class CircleCrop extends androidx.appcompat.widget.AppCompatImageView
         return new RectF(left, top, left + sideLength, top + sideLength);
     }
 
-    private void updateShaderMatrix()
-    {
-        if (mBitmap == null)
-        {
+    private void updateShaderMatrix() {
+        if (mBitmap == null) {
             return;
         }
 
@@ -527,38 +466,30 @@ public class CircleCrop extends androidx.appcompat.widget.AppCompatImageView
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
-    public boolean onTouchEvent(MotionEvent event)
-    {
-        if (mDisableCircularTransformation)
-        {
+    public boolean onTouchEvent(MotionEvent event) {
+        if (mDisableCircularTransformation) {
             return super.onTouchEvent(event);
         }
 
         return inTouchableArea(event.getX(), event.getY()) && super.onTouchEvent(event);
     }
 
-    private boolean inTouchableArea(float x, float y)
-    {
-        if (mBorderRect.isEmpty())
-        {
+    private boolean inTouchableArea(float x, float y) {
+        if (mBorderRect.isEmpty()) {
             return true;
         }
 
         return Math.pow(x - mBorderRect.centerX(), 2) + Math.pow(y - mBorderRect.centerY(), 2) <= Math.pow(mBorderRadius, 2);
     }
-
-    //Class.........................................................................................
-    private class OutlineProvider extends ViewOutlineProvider
-    {
+    
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private class OutlineProvider extends ViewOutlineProvider {
 
         @Override
-        public void getOutline(View view, Outline outline)
-        {
-            if (mDisableCircularTransformation)
-            {
+        public void getOutline(View view, Outline outline) {
+            if (mDisableCircularTransformation) {
                 ViewOutlineProvider.BACKGROUND.getOutline(view, outline);
-            } else
-            {
+            } else {
                 Rect bounds = new Rect();
                 mBorderRect.roundOut(bounds);
                 outline.setRoundRect(bounds, bounds.width() / 2.0f);
@@ -566,4 +497,5 @@ public class CircleCrop extends androidx.appcompat.widget.AppCompatImageView
         }
 
     }
+
 }
